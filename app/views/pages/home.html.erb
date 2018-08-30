@@ -1,2 +1,47 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<style>
+body {
+  background: #CCC;
+}
+
+canvas {
+  width: 400px;
+  height: 300px;
+  background: white;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded",function(){
+
+    var canvas = document.querySelector("canvas");
+    var signaturePad = new SignaturePad(canvas);
+    function resizeCanvas() {
+      var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext("2d").scale(ratio, ratio);
+      signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    document.querySelector('button').addEventListener('click', function(){
+      var signature = signaturePad.toDataURL("image/svg+xml");
+      console.log(signature);
+      var content = document.getElementById('signature_content');
+      content.value = signature;
+
+      document.querySelector('.signature').submit();
+
+    });
+  });
+</script>
+
+<canvas></canvas>
+<button>SAVE THIS</button>
+
+<%= simple_form_for :signature, id: "signature-form", url: accept_path() do |f| %>
+  <%= f.input :content, as: :hidden %>
+<% end %>
